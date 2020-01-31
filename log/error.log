@@ -1,0 +1,10 @@
+2020-01-13 17:29:23 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-13 17:33:05 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-13 17:53:04 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-13 17:54:31 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-14 14:39:55 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-14 16:30:33 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-14 16:31:32 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-14 16:32:10 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
+2020-01-14 17:41:59 [CRT] [main.go:40] [main.main] err open databasesError 1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?charset=utf8mb4' at line 1
+2020-01-14 17:42:15 [CRT] [main.go:40] [main.main] err open databasesError 1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?charset=utf8mb4' at line 1
