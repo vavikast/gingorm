@@ -20,21 +20,24 @@ const (
 	SESSION_CAPTCHA      = "GIN_CAPTCHA"  // captcha session key
 )
 
+//错误页面
 func Handle404(c *gin.Context) {
 	HandleMessage(c, "Sorry,I lost myself!")
 }
-
+//错误页面
 func HandleMessage(c *gin.Context, message string) {
 	c.HTML(http.StatusNotFound, "errors/error.html", gin.H{
 		"message": message,
 	})
 }
 
+//发送邮件
 func sendMail(to, subject, body string) error {
 	c := system.GetConfiguration()
 	return helpers.SendToMail(c.SmtpUsername, c.SmtpPassword, c.SmtpHost, to, subject, body, "html")
 }
 
+//通知邮件
 func NotifyEmail(subject, body string) error {
 	notifyEmailsStr := system.GetConfiguration().NotifyEmails
 	if notifyEmailsStr != "" {
@@ -52,6 +55,7 @@ func NotifyEmail(subject, body string) error {
 	return nil
 }
 
+//创建xml
 func CreateXMLSitemap() {
 	configuration := system.GetConfiguration()
 	folder := path.Join(configuration.Public, "sitemap")
@@ -99,9 +103,9 @@ func CreateXMLSitemap() {
 	}
 }
 
-func writeJSON(ctx *gin.Context, h gin.H) {
+func writeJSON(c *gin.Context, h gin.H) {
 	if _, ok := h["succeed"]; !ok {
 		h["succeed"] = false
 	}
-	ctx.JSON(http.StatusOK, h)
+	c.JSON(http.StatusOK, h)
 }

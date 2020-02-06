@@ -8,6 +8,7 @@ import (
 	"gingorm/models"
 )
 
+//链接索引
 func LinkIndex(c *gin.Context) {
 	links, _ := models.ListLinks()
 	user, _ := c.Get(CONTEXT_USER_KEY)
@@ -18,6 +19,8 @@ func LinkIndex(c *gin.Context) {
 	})
 }
 
+
+//创建链接
 func LinkCreate(c *gin.Context) {
 	var (
 		err   error

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//文件上传
 func Upload(c *gin.Context) {
 	var (
 		err      error

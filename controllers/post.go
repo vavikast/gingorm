@@ -30,6 +30,7 @@ func PostNew(c *gin.Context) {
 	c.HTML(http.StatusOK, "post/new.html", nil)
 }
 
+//创建post
 func PostCreate(c *gin.Context) {
 	tags := c.PostForm("tags")
 	title := c.PostForm("title")
@@ -50,11 +51,12 @@ func PostCreate(c *gin.Context) {
 		})
 		return
 	}
-
+	//给博客添加tag
 	// add tag for post
 	if len(tags) > 0 {
 		tagArr := strings.Split(tags, ",")
 		for _, tag := range tagArr {
+			//这样写有很大疑问。我测试的例子为什么转换的成数字的结果都是0
 			tagId, err := strconv.ParseUint(tag, 10, 64)
 			if err != nil {
 				continue

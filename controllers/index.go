@@ -16,7 +16,7 @@ import (
 func IndexGet(c *gin.Context) {
 	var (
 		pageIndex int
-		pageSize  =  system.GetConfiguration().PageSize  //作者的调用真是让人难过，最终调用的是PageSize = DEFAULT_PAGESIZE=10
+		pageSize  =  system.GetConfiguration().PageSize  //最终调用的是PageSize = DEFAULT_PAGESIZE=10
 		total     int
 		page      string
 		err       error
@@ -44,7 +44,7 @@ func IndexGet(c *gin.Context) {
 	}
 	//设置严格html策略
 	policy = bluemonday.StrictPolicy()
-	//电视标签和文章内容
+	//标签和文章内容
 	for _, post := range posts {
 		post.Tags, _ = models.ListTagByPostId(strconv.FormatUint(uint64(post.ID), 10))
 		post.Body = policy.Sanitize(string(blackfriday.Run([]byte(post.Body))))

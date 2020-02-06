@@ -21,7 +21,7 @@ func Md5(source string) string {
 	md5h.Write([]byte(source))
 	return hex.EncodeToString(md5h.Sum(nil))
 }
-
+//字符串截取
 func Truncate(s string, n int) string {
 	runes := []rune(s)
 	if len(runes) > n {
@@ -30,15 +30,18 @@ func Truncate(s string, n int) string {
 	return s
 }
 
+//生成uuid
 func UUID() string {
 	return uuid.Rand().Hex()
 }
 
+//生成当前时间
 func GetCurrentTime() time.Time {
 	loc, _ := time.LoadLocation("Asia/Shanghai")
 	return time.Now().In(loc)
 }
 
+//发送邮件
 func SendToMail(user, password, host, to, subject, body, mailtype string) error {
 	hp := strings.Split(host, ":")
 	auth := smtp.PlainAuth("", user, password, hp[0])
@@ -53,6 +56,7 @@ func SendToMail(user, password, host, to, subject, body, mailtype string) error 
 	return smtp.SendMail(host, auth, user, send_to, msg)
 }
 
+//路径是否存在
 func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -64,6 +68,8 @@ func PathExists(path string) (bool, error) {
 	return false, err
 }
 
+
+//解密
 func Decrypt(ciphertext []byte, keystring string) ([]byte, error) {
 	// Key
 	key := []byte(keystring)
@@ -96,6 +102,7 @@ func Decrypt(ciphertext []byte, keystring string) ([]byte, error) {
 	return ciphertext, nil
 }
 
+//加密
 func Encrypt(plaintext []byte, keystring string) ([]byte, error) {
 
 	// Key

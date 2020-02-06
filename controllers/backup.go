@@ -81,11 +81,13 @@ func Backup() (err error) {
 		bodyBytes   []byte
 		encryptData []byte
 	)
+	//此处，我使用的是mysql，感觉backup没生效，后期看下怎么更改。
 	u, err = url.Parse(system.GetConfiguration().DSN)
 	if err != nil {
 		seelog.Debug("parse dsn error:%v", err)
 		return
 	}
+
 	exist, _ = helpers.PathExists(u.Path)
 	if !exist {
 		err = errors.New("database file doesn't exists.")

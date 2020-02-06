@@ -16,9 +16,9 @@ import (
 )
 
 func main() {
-	// 输出了指针类型configFilePath，实际默认获取了值“conf/conf.yaml”
+	// 输出了指针类型configFilePath，实际默认获取了指针值为“conf/conf.yaml”
 	configFilePath := flag.String("C", "conf/conf.yaml", "config file path")
-	// 输出了指针类型logConfigPath，实际默认获取了值“conf/seelog.xml”
+	// 输出了指针类型logConfigPath，实际默认获取了指针值“conf/seelog.xml”
 	logConfigPath := flag.String("L", "conf/seelog.xml", "log config file path")
 	//flag解析， 还没有想通通过flag的意义，后面看完代码再补充。
 	flag.Parse()
@@ -43,8 +43,8 @@ func main() {
 	github_tokenurl: https://github.com/login/oauth/access_token
 	session_secret: wblog
 	public: static
-	addr: :8090
-	page_size: 5
+	addr: :80
+	page_size: 10
 	smms_fileserver: https://sm.ms/api/upload
 	}
 	***/
@@ -91,18 +91,22 @@ func main() {
 
 	// 默认条件已经设置为true，所以可以下面的操作
 	//先是跳转到执行controllers.SignupGet，跳转到signup.html,然后页面form注册成功后跳转到controllers.SigninGet
-	//默认开启了，注册即是管理员的身份
+	//默认开启注册,config配置文件中signupenabled=true
 	if system.GetConfiguration().SignupEnabled {
 		router.GET("/signup", controllers.SignupGet)
 		router.POST("/signup", controllers.SignupPost)
+		//此处注册就是管理员了，所以可以关闭注册，或者设置isadmin=false
 	}
 	// user signin and logout
 	//登录
 	//登出，登出后跳转到/signin页面
 	//github认证退出
 	router.GET("/signin", controllers.SigninGet)
+	//登录认证如果是管理员则跳转到/admin,不是则跳转到/
 	router.POST("/signin", controllers.SigninPost)
+	//登录出去，清空所有登录信息
 	router.GET("/logout", controllers.LogoutGet)
+	//使用github认证
 	router.GET("/oauth2callback", controllers.Oauth2Callback)
 	router.GET("/auth/:authType", controllers.AuthGet)
 
@@ -125,10 +129,13 @@ func main() {
 	router.GET("/active", controllers.ActiveSubscriber)
 	router.GET("/unsubscribe", controllers.UnSubscribe)
 
-	//获取博文信息
+	//获取博文信息，暂时没发现博文post和页面page的关系。不知道为什么这么做。
 	router.GET("/page/:id", controllers.PageGet)
+	//获取博文
 	router.GET("/post/:id", controllers.PostGet)
+	//获取标签
 	router.GET("/tag/:tag", controllers.TagGet)
+	//获取归档
 	router.GET("/archives/:year/:month", controllers.ArchiveGet)
 
 	//获取链接信息
@@ -136,7 +143,7 @@ func main() {
 
 	//管理员页面
 	authorized := router.Group("/admin")
-	//使用认证中间件
+	//使用认证中间件,只有管理员账号才能跳转
 	authorized.Use(AdminScopeRequired())
 	{
 		// index 索引
@@ -145,7 +152,7 @@ func main() {
 		// image upload 图片上传
 		authorized.POST("/upload", controllers.Upload)
 
-		// page 博客管理
+		// page 页面管理
 		authorized.GET("/page", controllers.PageIndex)
 		authorized.GET("/new_page", controllers.PageNew)
 		authorized.POST("/new_page", controllers.PageCreate)
@@ -171,13 +178,14 @@ func main() {
 		authorized.POST("/user/:id/lock", controllers.UserLock)
 
 		// profile 配置
+		//跟个人账户有关
 		authorized.GET("/profile", controllers.ProfileGet)
 		authorized.POST("/profile", controllers.ProfileUpdate)
 		authorized.POST("/profile/email/bind", controllers.BindEmail)
 		authorized.POST("/profile/email/unbind", controllers.UnbindEmail)
 		authorized.POST("/profile/github/unbind", controllers.UnbindGithub)
 
-		// subscriber 订阅者
+		// subscriber 订阅者，暂时感觉用不到
 		authorized.GET("/subscriber", controllers.SubscriberIndex)
 		authorized.POST("/subscriber", controllers.SubscriberPost)
 
@@ -219,10 +227,12 @@ func setTemplate(engine *gin.Engine) {
 
 	engine.SetFuncMap(funcMap)
 	//engine.LoadHTMLGlob(filepath.Join(getCurrentDirectory(), "views/**/*"))
+	//设置匹配位置为views二级目录下
 	engine.LoadHTMLGlob( "views/**/*")
 }
 
 //setSessions initializes sessions & csrf middlewares
+//初始化session，此处与原github有所变更
 func setSessions(router *gin.Engine) {
 	config := system.GetConfiguration()
 	//https://github.com/gin-gonic/contrib/tree/master/sessions

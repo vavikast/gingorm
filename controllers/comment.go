@@ -21,9 +21,11 @@ func CommentPost(c *gin.Context) {
 
 	defer writeJSON(c, res)
 	s := sessions.Default(c)
+	//SESSION_KEY在comment.go下面设置了常量
 	sessionUserID := s.Get(SESSION_KEY)
 	userId, _ := sessionUserID.(uint)
 
+	// 验证二维码是否正确
 	verifyCode := c.PostForm("verifyCode")
 	captchaId := s.Get(SESSION_CAPTCHA)
 	s.Delete(SESSION_CAPTCHA)

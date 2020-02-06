@@ -8,3 +8,6 @@
 2020-01-14 16:32:10 [CRT] [main.go:43] [main.main] err open databasesError 1045: Access denied for user 'root'@'localhost' (using password: YES)
 2020-01-14 17:41:59 [CRT] [main.go:40] [main.main] err open databasesError 1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?charset=utf8mb4' at line 1
 2020-01-14 17:42:15 [CRT] [main.go:40] [main.main] err open databasesError 1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?charset=utf8mb4' at line 1
+2020-02-01 09:53:06 [CRT] [main.go:59] [main.main] err open databasesdial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020-02-01 09:54:01 [CRT] [main.go:59] [main.main] err open databasesdial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020-02-02 09:01:31 [CRT] [main.go:59] [main.main] err open databasesdial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.

@@ -42,6 +42,7 @@ func Minus(a1, a2 int) int {
 	return a1 - a2
 }
 
+//获取标签
 func ListTag() (tagstr string) {
 	tags, err := models.ListTag()
 	if err != nil {

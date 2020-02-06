@@ -75,6 +75,7 @@ func SignupPost(c *gin.Context) {
 	email := c.PostForm("email")
 	telephone := c.PostForm("telephone")
 	password := c.PostForm("password")
+	//此处注册就是管理员
 	user := &models.User{
 		Email:     email,
 		Telephone: telephone,

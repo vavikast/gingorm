@@ -37,6 +37,8 @@ const (
 
 var configuration *Configuration
 
+
+//导入配置文件，获取配置文件
 func LoadConfiguration(path string) error {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -50,10 +52,12 @@ func LoadConfiguration(path string) error {
 	if config.PageSize <= 0 {
 		config.PageSize = DEFAULT_PAGESIZE
 	}
+	//为下面的GetConfiguration做准备，但是这样写合适吗
 	configuration = &config
 	return err
 }
 
 func GetConfiguration() *Configuration {
 	return configuration
+
 }

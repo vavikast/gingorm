@@ -16,16 +16,18 @@ func PageGet(c *gin.Context) {
 		return
 	}
 	page.View++
+	//数据库中更新文章浏览量
 	page.UpdateView()
 	c.HTML(http.StatusOK, "page/display.html", gin.H{
 		"page": page,
 	})
 }
-
+//创建文章
 func PageNew(c *gin.Context) {
 	c.HTML(http.StatusOK, "page/new.html", nil)
 }
 
+//创建文章内容
 func PageCreate(c *gin.Context) {
 	title := c.PostForm("title")
 	body := c.PostForm("body")
@@ -47,6 +49,7 @@ func PageCreate(c *gin.Context) {
 	c.Redirect(http.StatusMovedPermanently, "/admin/page")
 }
 
+//文章编辑
 func PageEdit(c *gin.Context) {
 	id := c.Param("id")
 	page, err := models.GetPageById(id)
@@ -58,6 +61,7 @@ func PageEdit(c *gin.Context) {
 	})
 }
 
+//文章更新
 func PageUpdate(c *gin.Context) {
 	id := c.Param("id")
 	title := c.PostForm("title")
@@ -79,6 +83,7 @@ func PageUpdate(c *gin.Context) {
 	c.Redirect(http.StatusMovedPermanently, "/admin/page")
 }
 
+//文章发布
 func PagePublish(c *gin.Context) {
 	var (
 		err error
@@ -100,6 +105,7 @@ func PagePublish(c *gin.Context) {
 	res["succeed"] = true
 }
 
+//文章删除
 func PageDelete(c *gin.Context) {
 	var (
 		err error
@@ -122,6 +128,8 @@ func PageDelete(c *gin.Context) {
 	res["succeed"] = true
 }
 
+
+//文章索引
 func PageIndex(c *gin.Context) {
 	pages, _ := models.ListAllPage()
 	user, _ := c.Get(CONTEXT_USER_KEY)

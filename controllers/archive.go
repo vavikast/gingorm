@@ -17,7 +17,7 @@ func ArchiveGet(c *gin.Context) {
 		month     string
 		page      string
 		pageIndex int
-		pageSize  = system.GetConfiguration().PageSize //获取configuration结构体中的pageSize
+		pageSize  = system.GetConfiguration().PageSize //获取configuration结构体中的pageSize，默认是10
 		total     int
 		err       error
 		posts     []*models.Post
@@ -30,6 +30,7 @@ func ArchiveGet(c *gin.Context) {
 	if pageIndex <= 0 {
 		pageIndex = 1
 	}
+	//根据归档年份查询所有文档
 	posts, err = models.ListPostByArchive(year, month, pageIndex, pageSize)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)

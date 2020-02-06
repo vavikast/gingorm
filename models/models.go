@@ -23,11 +23,11 @@ type BaseModel struct {
 }
 
 
-// table page 在数据库中创建pages表-页面表
+// table page 在数据库中创建文章表
 type  Page struct {
 	BaseModel
 	Title string //title 标题
-	Body string //body 主体
+	Body string //body 文章内容
 	View int //view count 观看次数
 	IsPublished bool //是否发表
 
@@ -35,42 +35,42 @@ type  Page struct {
 
 
 
-// table posts
+// table posts 文章发布内容
 type Post struct {
 	BaseModel
 	Title        string     // title
 	Body         string     // body
 	View         int        // view count
 	IsPublished  bool       // published or not
-	Tags         []*Tag     `gorm:"-"` // tags of post
-	Comments     []*Comment `gorm:"-"` // comments of post
-	CommentTotal int        `gorm:"-"` // count of comment
+	Tags         []*Tag     `gorm:"-"` // tags of post  标签 引用标签
+	Comments     []*Comment `gorm:"-"` // comments of post 评论，引用评论
+	CommentTotal int        `gorm:"-"` // count of comment 评论总数
 }
 
 // table tags
 type Tag struct {
 	BaseModel
-	Name  string // tag name
-	Total int    `gorm:"-"` // count of post
+	Name  string // tag name 标签名称
+	Total int    `gorm:"-"` // count of post  标签总数
 }
 
-// table post_tags
+// table post_tags 标签发表
 type PostTag struct {
 	BaseModel
-	PostId uint // post id
-	TagId  uint // tag id
+	PostId uint // post id 文章发表id
+	TagId  uint // tag id  标签id
 }
 
 // table users
 type User struct {
 	gorm.Model
-	Email         string    `gorm:"unique_index;default:null"` //邮箱
-	Telephone     string    `gorm:"unique_index;default:null"` //手机号码
-	Password      string    `gorm:"default:null"`              //密码
+	Email         string    `gorm:"unique_index;default:null"` //邮箱，默认为空
+	Telephone     string    `gorm:"unique_index;default:null"` //手机号码，默认为空
+	Password      string    `gorm:"default:null"`              //密码，默认为空
 	VerifyState   string    `gorm:"default:'0'"`               //邮箱验证状态
 	SecretKey     string    `gorm:"default:null"`              //密钥
-	OutTime       time.Time `gorm:"default:null"` //过期时间 #此处更改 不更改解析出错
-	GithubLoginId string    `gorm:"unique_index;default:null"` // github唯一标识
+	OutTime       time.Time `gorm:"default:null"` //过期时间 #此处更改 不更改解析出错,可能是版本问题
+	GithubLoginId string    `gorm:"unique_index;default:null"` // github唯一标识，默认为空
 	GithubUrl     string    //github地址
 	IsAdmin       bool      //是否是管理员
 	AvatarUrl     string    // 头像链接
@@ -102,57 +102,61 @@ type Subscriber struct {
 	Signature      string    //签名
 }
 
-// table link
+// table link  友情链接
 type Link struct {
 	gorm.Model
 	Name string //名称
 	Url  string //地址
-	Sort int    `gorm:"default:'0'"` //排序
+	Sort int    `gorm:"default:'0'"` //排序，默认是0
 	View int    //访问次数
 }
 
 // query result
 type QrArchive struct {
-	ArchiveDate time.Time //month
+	ArchiveDate time.Time //时间
 	Total       int       //total
 	Year        int       // year
 	Month       int       // month
 }
 
+
+//smms文件
 type SmmsFile struct {
 	BaseModel
-	FileName  string `json:"filename"`
-	StoreName string `json:"storename"`
-	Size      int    `json:"size"`
-	Width     int    `json:"width"`
-	Height    int    `json:"height"`
-	Hash      string `json:"hash"`
-	Delete    string `json:"delete"`
-	Url       string `json:"url"`
-	Path      string `json:"path"`
+	FileName  string `json:"filename"` //文件名
+	StoreName string `json:"storename"` //存储名
+	Size      int    `json:"size"`  //大小
+	Width     int    `json:"width"` //宽
+	Height    int    `json:"height"` //高
+	Hash      string `json:"hash"` //hash
+	Delete    string `json:"delete"` //删除
+	Url       string `json:"url"` //url链接
+	Path      string `json:"path"` //路径
 }
 
 var DB *gorm.DB   //做了一个全局的的DB, initDB函数中把db赋值给DB，同时initDB中的return的db在main函数中被defer db.close了，函数没有被关闭之前全局DB继承了db的属性，所以可以执行下面的函数。
 
 func InitDB() (*gorm.DB, error) {
 
-	db, err := gorm.Open("mysql", "root:Itcen2531,.@(127.0.0.1:3306)/wblog?charset=utf8mb4&parseTime=True&loc=Local")
+	db, err := gorm.Open("mysql", "root:123456@(127.0.0.1:3306)/wblog?charset=utf8mb4&parseTime=True&loc=Local")
 	if err == nil {
 		DB = db
 		//db.LogMode(true)
+		//根据struct创建数据库
 		db.AutoMigrate(&Page{}, &Post{}, &Tag{}, &PostTag{}, &User{}, &Comment{}, &Subscriber{}, &Link{}, &SmmsFile{})
+		//创建索引
 		db.Model(&PostTag{}).AddUniqueIndex("uk_post_tag", "post_id", "tag_id")
 		return db, err
 	}
 	return nil, err
 }
 
-// Page  插入页面
+// 插入页面
 func (page *Page) Insert() error {
 	return DB.Create(page).Error
 }
 
-//更新页面，但是是全局更新，没想通这样操作的意义，等后面的操作看完，再补充
+//更新页面状态
 func (page *Page) Update() error {
 	return DB.Model(page).Updates(map[string]interface{}{
 		"title":        page.Title,
@@ -160,14 +164,14 @@ func (page *Page) Update() error {
 		"is_published": page.IsPublished,
 	}).Error
 }
-//更新浏览量，但是是全局更新，没想通这样操作的意义，等后面的操作看完，再补充
+//更新浏览量
 func (page *Page) UpdateView() error {
 	return DB.Model(page).Updates(map[string]interface{}{
 		"view": page.View,
 	}).Error
 }
 
-//删除page数据，但是是全局更新
+//删除文章页面
 func (page *Page) Delete() error {
 	return DB.Delete(page).Error
 }
@@ -181,16 +185,6 @@ func GetPageById(id string) (*Page, error) {
 	var page Page
 	err = DB.First(&page, "id = ?", pid).Error
 	return &page, err
-}
-
-//获取所有公开页面
-func ListPublishedPage() ([]*Page, error) {
-	return _listPage(true)
-}
-
-//获取所有页面
-func ListAllPage() ([]*Page, error) {
-	return _listPage(false)
 }
 
 
@@ -207,8 +201,20 @@ func _listPage(published bool) ([]*Page, error) {
 	return pages, err
 }
 
+//获取所有公开页面
+func ListPublishedPage() ([]*Page, error) {
+	return _listPage(true)
+}
 
-//获取数量页面数量
+//获取所有页面
+func ListAllPage() ([]*Page, error) {
+	return _listPage(false)
+}
+
+
+
+
+//获取页面数量
 func CountPage() int {
 	var count int
 	DB.Model(&Page{}).Count(&count)
@@ -220,7 +226,7 @@ func (post *Post) Insert() error {
 	return DB.Create(post).Error
 }
 
-//更新发布页面，但是是更新所有页面，还没有想通这样操作的意义
+//更新发布页面
 func (post *Post) Update() error {
 	return DB.Model(post).Updates(map[string]interface{}{
 		"title":        post.Title,
@@ -244,7 +250,6 @@ func (post *Post) Delete() error {
 
 //摘要，估计是主页显示使用，还需要进一步确定
 //blackfriday中的MarkdownBasic方法已经换成了run方法，此处使用了严格的html策略
-
 
 func (post *Post) Excerpt() template.HTML {
 	//you can sanitize, cut it down, add images, etc
